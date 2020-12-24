@@ -10,35 +10,56 @@ with open('./seat_data.txt','r') as f:
 
 
 
-def next_position(current_row, curent_column,
-                  next_letter):
+def next_position(current_row, current_column, next_letter):
     print(next_letter)
     if next_letter == 'F':
         current_row = current_row[:ceil(len(current_row)/2)]
     elif next_letter == 'B':
         current_row = current_row[int(len(current_row)/2):]
     elif next_letter == 'L':
-        current_column = curent_column[:int(len(curent_column)/2)]
+        current_column = current_column[:ceil(len(current_column)/2)]
     elif next_letter == 'R':
-        current_column = curent_column[int(len(curent_column)/2):]
-    return current_row, curent_column
+        current_column = current_column[int(len(current_column)/2):]
+    return current_row, current_column
 
 def get_seat_pos(seat):
-    current_row = [i for i in range(127)]
-    curent_column = [i for i in range(7)]
+    current_row = [i for i in range(128)]
+    current_column = [i for i in range(8)]
+    print(min(current_row), max(current_row),   min(current_column), max(current_column))
     for pos in list(seat):
-        current_row, current_column = next_position(current_row, curent_column,
+        current_row, current_column = next_position(current_row, current_column,
                                                     pos)
-        print(min(current_row), max(current_row),   min(curent_column), max(curent_column))
-    return current_row, curent_column
+        print(min(current_row), max(current_row),   min(current_column), max(current_column))
+    return current_row[0], current_column[0]
+
+def calc_id(row, column):
+    return row * 8 + column
+
+def find_missing(seat_ids):
+    i_start = 12
+    index = 0
+
+    while True:
+        if i_start != seat_ids[index]:
+            print(f'Missing seat is id: {i_start}')
+            break
+        elif i_start > 1000:
+            print("Couldn't find the missing seat")
+            break
+        i_start += 1
+        index += 1
 
 def main():
+    seat_ids = []
     for seat in data:
         row, column = get_seat_pos(seat)
+        seat_id = calc_id(row, column)
+        seat_ids.append(seat_id)
+    print(max(seat_ids))
+    seat_ids.sort()
+    print(seat_ids)
+    find_missing(seat_ids)
 
-test_seat = "BFFFBBFRRR"
 
-print(get_seat_pos(test_seat))
-print('------------------first seven below -------------------')
-print(get_seat_pos('FBFBBFFRLR'))
-#main()
+if __name__ == '__main__':
+    main()
